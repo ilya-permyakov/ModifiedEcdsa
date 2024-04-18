@@ -56,17 +56,9 @@ class BasePoint:
         factors = factor(elliptic_curve_order)
         prime_factors = [f[0] for f in factors]
         subgroup_order = prime_factors[-1]
-        print('subgroup_order = ', subgroup_order)
         h = int(elliptic_curve_order / subgroup_order)
         while True:
             Q = BasePoint(self.curve).find_random_point()
-            print('Q = ', Q.x, Q.y)
             base_point = Q.mult(Q, h)
-            if base_point.x is not float('inf') and base_point.y is not float('inf'):
-                return base_point
-
-
-params = GenCurveConfig().generate_params()
-print(params)
-point = BasePoint(params).find_base_point()
-print('G = ', point.x, point.y, point.curve)
+            if base_point.x != 0 and base_point.y != 0:
+                return base_point, subgroup_order

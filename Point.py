@@ -18,11 +18,11 @@ class Point:
 
         if self.is_equality(point):
             if 2 * point.y % p == 0:
-                return Point(float('inf'), float('inf'), self.curve)
+                return Point(0, 0, self.curve)    # Point(float('inf'), float('inf'), self.curve)
             lambd = (3 * point.x ** 2 + a) * pow(2 * point.y, -1, p) % p
         else:
             if point.x - self.x % p == 0:
-                return Point(float('inf'), float('inf'), self.curve)
+                return Point(0, 0, self.curve)    # Point(float('inf'), float('inf'), self.curve)
             lambd = (point.y - self.y) * pow(point.x - self.x, -1, p) % p
 
         x = (lambd ** 2 - self.x - point.x) % p

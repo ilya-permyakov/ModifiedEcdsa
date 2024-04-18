@@ -2,7 +2,7 @@ import random
 
 
 class GenCurveConfig:
-    def __init__(self, max_value=2000):
+    def __init__(self, max_value=10000):
         self.max_value = max_value
 
     @staticmethod
