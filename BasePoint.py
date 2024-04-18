@@ -1,6 +1,7 @@
 import random
 from Point import Point
 from CurveConfig import GenCurveConfig
+from sage.all import GF, EllipticCurve, factor
 
 
 class BasePoint:
@@ -41,13 +42,31 @@ class BasePoint:
         while True:
             x = random.randint(1, self.curve['p'])
             y_squared = (x ** 3 + self.curve['a'] * x + self.curve['b']) % self.curve['p']
-            y = self.tonelli_shanks(y_squared)
-            if y is not None and ((y * y - y_squared) % self.curve['p'] == 0):
-                return Point(x, y, self.curve)
+            try:
+                y = self.tonelli_shanks(y_squared)
+                if y is not None and ((y * y - y_squared) % self.curve['p'] == 0):
+                    return Point(x, y, self.curve)
+            except AssertionError:
+                continue
 
-    # def find_base_point(self):
+    def find_base_point(self):
+        F = GF(self.curve['p'])
+        elliptic_curve = EllipticCurve(F, [self.curve['a'], self.curve['b']])
+        elliptic_curve_order = elliptic_curve.order()
+        factors = factor(elliptic_curve_order)
+        prime_factors = [f[0] for f in factors]
+        subgroup_order = prime_factors[-1]
+        print('subgroup_order = ', subgroup_order)
+        h = int(elliptic_curve_order / subgroup_order)
+        while True:
+            Q = BasePoint(self.curve).find_random_point()
+            print('Q = ', Q.x, Q.y)
+            base_point = Q.mult(Q, h)
+            if base_point.x is not float('inf') and base_point.y is not float('inf'):
+                return base_point
 
 
 params = GenCurveConfig().generate_params()
-q = BasePoint(params).find_random_point()
-print(q.curve, q.x, q.y)
+print(params)
+point = BasePoint(params).find_base_point()
+print('G = ', point.x, point.y, point.curve)
