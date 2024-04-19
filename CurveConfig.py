@@ -1,9 +1,7 @@
-import random
+import secrets
 
 
 class GenCurveConfig:
-    def __init__(self, max_value=10000):
-        self.max_value = max_value
 
     @staticmethod
     def is_prime(n, k=15):
@@ -17,7 +15,7 @@ class GenCurveConfig:
             d //= 2
             s += 1
         for _ in range(k):
-            a = random.randint(2, n - 2)
+            a = secrets.randbelow(n - 2) + 2
             b = pow(a, d, n)
             if b == 1 or b == n - 1:
                 continue
@@ -31,15 +29,14 @@ class GenCurveConfig:
 
     def generate_prime(self):
         while True:
-            p = random.randint(2, self.max_value)
+            p = secrets.randbits(256)
             if self.is_prime(p):
                 return p
 
     def generate_params(self):
         p = self.generate_prime()
         while True:
-            a = random.randint(1, self.max_value)
-            b = random.randint(1, self.max_value)
+            a = secrets.randbelow(150) + 1
+            b = secrets.randbelow(150) + 1
             if (4 * a ** 3 + 27 * b ** 2) % p != 0:
                 return {'a': a, 'b': b, 'p': p}
-

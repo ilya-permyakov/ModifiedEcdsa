@@ -1,6 +1,6 @@
-import random
+import secrets
+
 from Point import Point
-from CurveConfig import GenCurveConfig
 from sage.all import GF, EllipticCurve, factor
 
 
@@ -40,7 +40,7 @@ class BasePoint:
 
     def find_random_point(self):
         while True:
-            x = random.randint(1, self.curve['p'])
+            x = secrets.randbelow(self.curve['p'] - 1) + 1
             y_squared = (x ** 3 + self.curve['a'] * x + self.curve['b']) % self.curve['p']
             try:
                 y = self.tonelli_shanks(y_squared)
@@ -61,4 +61,4 @@ class BasePoint:
             Q = BasePoint(self.curve).find_random_point()
             base_point = Q.mult(Q, h)
             if base_point.x != 0 and base_point.y != 0:
-                return base_point, subgroup_order
+                return {'base_point': base_point, 'subgroup_order': subgroup_order}
