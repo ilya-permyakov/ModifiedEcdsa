@@ -1,5 +1,4 @@
 import secrets
-
 from Point import Point
 from sage.all import GF, EllipticCurve, factor
 
@@ -11,20 +10,26 @@ class BasePoint:
     def tonelli_shanks(self, n):
         p = self.curve['p']
         assert pow(n, (p - 1) // 2, p) == 1
+
         q = p - 1
         s = 0
+
         while q % 2 == 0:
             q //= 2
             s += 1
+
         if s == 1:
             return pow(n, (p + 1) // 4, p)
+
         for z in range(2, p):
             if p - 1 == pow(z, (p - 1) // 2, p):
                 break
+
         c = pow(z, q, p)
         r = pow(n, (q + 1) // 2, p)
         t = pow(n, q, p)
         m = s
+
         while t != 1:
             i = 0
             tmp = t
@@ -36,6 +41,7 @@ class BasePoint:
             c = b * b % p
             t = t * c % p
             m = i
+
         return r
 
     def find_random_point(self):
@@ -57,6 +63,7 @@ class BasePoint:
         prime_factors = [f[0] for f in factors]
         subgroup_order = prime_factors[-1]
         h = int(elliptic_curve_order / subgroup_order)
+
         while True:
             Q = BasePoint(self.curve).find_random_point()
             base_point = Q.mult(Q, h)

@@ -16,7 +16,6 @@ class ModifiedECDSA:
     def hash_string_to_int(message):
         hash_obj = sha3_256(message.encode())
         hex_dig = hash_obj.hexdigest()
-
         num = int(hex_dig, 16)
         return num
 
@@ -55,6 +54,7 @@ class ModifiedECDSA:
             return 1
 
 
+'''
 params = GenCurveConfig().generate_params()
 print(params)
 G = BasePoint(params).find_base_point()
@@ -64,3 +64,4 @@ m2 = 'Hello World!'
 keys = ecdsa.gen_keys()
 sign = ecdsa.gen_sign(keys, m)
 verif = ecdsa.verification(params, m, sign, G)
+'''

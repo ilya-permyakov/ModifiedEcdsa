@@ -5,15 +5,16 @@ class GenCurveConfig:
 
     @staticmethod
     def is_prime(n, k=15):
-        if n <= 3:
-            raise Exception('n should be greater than 3.')
         if n % 2 == 0:
             return False
+
         d = n - 1
         s = 0
+
         while d % 2 == 0:
             d //= 2
             s += 1
+
         for _ in range(k):
             a = secrets.randbelow(n - 2) + 2
             b = pow(a, d, n)
@@ -35,6 +36,7 @@ class GenCurveConfig:
 
     def generate_params(self):
         p = self.generate_prime()
+
         while True:
             a = secrets.randbelow(150) + 1
             b = secrets.randbelow(150) + 1

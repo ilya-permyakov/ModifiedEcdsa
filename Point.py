@@ -41,4 +41,3 @@ class Point:
                 result = result.add(point)
 
         return result
-
