@@ -1,5 +1,5 @@
 class Point:
-    def __init__(self, x, y, curve):
+    def __init__(self, x, y, curve=None):
         self.x = x
         self.y = y
         self.curve = curve

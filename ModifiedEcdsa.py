@@ -1,5 +1,3 @@
-from BasePoint import BasePoint
-from CurveConfig import GenCurveConfig
 from Point import Point
 import secrets
 from hashlib import sha3_256
@@ -9,7 +7,7 @@ import timeit
 class ModifiedECDSA:
     def __init__(self, curve, G):
         self.curve = curve
-        self.base_point = G['base_point']
+        self.base_point = Point(G['base_point'].x, G['base_point'].y, curve)
         self.subgroup_order = int(G['subgroup_order'])
 
     @staticmethod
@@ -32,36 +30,23 @@ class ModifiedECDSA:
         s = (keys['d'] * (k - self.hash_string_to_int(message))) % self.subgroup_order
         end_time = timeit.default_timer()
         print(f"Время генерации подписи: {end_time - start_time} секунд.")
-        return {'r': r, 's': s, 'Q': keys['Q']}
+        return {'r': r, 's': s}
 
-    def verification(self, params, message, sign, base_point):
+    def verification(self, message, sign, public_key):
         start_time = timeit.default_timer()
-        if base_point['subgroup_order'] < sign['r'] < 1 and base_point['subgroup_order'] < sign['s'] < 1:
-            print('Sign is a fake')
-            return 1
-        u1 = sign['s'] % base_point['subgroup_order']
-        u2 = self.hash_string_to_int(message) % base_point['subgroup_order']
-        A = Point.add(sign['Q'].mult(sign['Q'], u1), base_point['base_point'].mult(base_point['base_point'], u2))
-        if sign['r'] == A.x % base_point['subgroup_order']:
-            print('OK!')
+        if self.subgroup_order < sign['r'] < 1 and self.subgroup_order < sign['s'] < 1:
+            result = 'Подпись неверна'
+            return result
+        u1 = sign['s'] % self.subgroup_order
+        u2 = self.hash_string_to_int(message) % self.subgroup_order
+        A = Point.add(public_key.mult(public_key, u1), self.base_point.mult(self.base_point, u2))
+        if sign['r'] == A.x % self.subgroup_order:
+            result = 'Подпись верна'
             end_time = timeit.default_timer()
             print(f"Время проверки подписи: {end_time - start_time} секунд.")
-            return 0
+            return result
         else:
-            print('Sign is a fake')
+            result = 'Подпись неверна'
             end_time = timeit.default_timer()
             print(f"Время проверки подписи: {end_time - start_time} секунд.")
-            return 1
-
-
-'''
-params = GenCurveConfig().generate_params()
-print(params)
-G = BasePoint(params).find_base_point()
-ecdsa = ModifiedECDSA(params, G)
-m = 'Hello, World!'
-m2 = 'Hello World!'
-keys = ecdsa.gen_keys()
-sign = ecdsa.gen_sign(keys, m)
-verif = ecdsa.verification(params, m, sign, G)
-'''
+            return result
