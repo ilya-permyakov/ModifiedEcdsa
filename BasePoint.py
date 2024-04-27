@@ -1,6 +1,7 @@
 import secrets
 from Point import Point
 from sage.all import GF, EllipticCurve, factor
+import timeit
 
 
 class BasePoint:
@@ -45,17 +46,21 @@ class BasePoint:
         return r
 
     def find_random_point(self):
+        start_time = timeit.default_timer()
         while True:
             x = secrets.randbelow(self.curve['p'] - 1) + 1
             y_squared = (x ** 3 + self.curve['a'] * x + self.curve['b']) % self.curve['p']
             try:
                 y = self.tonelli_shanks(y_squared)
                 if y is not None and ((y * y - y_squared) % self.curve['p'] == 0):
+                    end_time = timeit.default_timer()
+                    print(f"Время поиска рандомной точки: {end_time - start_time} секунд.")
                     return Point(x, y, self.curve)
             except AssertionError:
                 continue
 
     def find_base_point(self):
+        start_time = timeit.default_timer()
         F = GF(self.curve['p'])
         elliptic_curve = EllipticCurve(F, [self.curve['a'], self.curve['b']])
         elliptic_curve_order = elliptic_curve.order()
@@ -68,4 +73,6 @@ class BasePoint:
             Q = BasePoint(self.curve).find_random_point()
             base_point = Q.mult(Q, h)
             if base_point.x != 0 and base_point.y != 0:
+                end_time = timeit.default_timer()
+                print(f"Время поиска базовой точки: {end_time - start_time} секунд.")
                 return {'base_point': base_point, 'subgroup_order': subgroup_order}
