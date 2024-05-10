@@ -1,7 +1,6 @@
 from Point import Point
 import secrets
 from hashlib import sha3_256
-import timeit
 
 
 class ModifiedECDSA:
@@ -32,17 +31,13 @@ class ModifiedECDSA:
         return {'d': d, 'Q': Q}
 
     def gen_sign(self, keys, file):
-        start_time = timeit.default_timer()
         k = secrets.randbelow(self.subgroup_order - 1) + 1
         P = self.base_point.mult(self.base_point, k)
         r = P.x % self.subgroup_order
         s = (keys['d'] * (k - self.hash_file_to_int(file))) % self.subgroup_order
-        end_time = timeit.default_timer()
-        print(f"Время генерации подписи: {end_time - start_time} секунд.")
         return {'r': r, 's': s}
 
     def verification(self, file, sign, public_key):
-        start_time = timeit.default_timer()
         if self.subgroup_order < sign['r'] < 1 and self.subgroup_order < sign['s'] < 1:
             result = 'Подпись неверна'
             return result
@@ -51,11 +46,7 @@ class ModifiedECDSA:
         A = Point.add(public_key.mult(public_key, u1), self.base_point.mult(self.base_point, u2))
         if sign['r'] == A.x % self.subgroup_order:
             result = 'Подпись верна'
-            end_time = timeit.default_timer()
-            print(f"Время проверки подписи: {end_time - start_time} секунд.")
             return result
         else:
             result = 'Подпись неверна'
-            end_time = timeit.default_timer()
-            print(f"Время проверки подписи: {end_time - start_time} секунд.")
             return result
