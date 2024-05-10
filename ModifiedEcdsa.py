@@ -27,7 +27,8 @@ class ModifiedECDSA:
 
     def gen_keys(self):
         d = secrets.randbelow(self.subgroup_order - 1) + 1
-        Q = self.base_point.mult(self.base_point, pow(d, -1, self.subgroup_order))
+        d_1 = pow(d, -1, self.subgroup_order)
+        Q = self.base_point.mult(self.base_point, d_1)
         return {'d': d, 'Q': Q}
 
     def gen_sign(self, keys, file):
