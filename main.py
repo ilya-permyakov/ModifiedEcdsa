@@ -1,5 +1,4 @@
-from PyQt5 import uic, QtWidgets
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5 import uic, QtWidgets, QtCore
 import sys
 from ModifiedEcdsa import ModifiedECDSA
 from BasePoint import BasePoint
@@ -12,13 +11,20 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__()
         uic.loadUi('NewMainWindow.ui', self)
         self.setWindowTitle("Цифровая подпись")
-        self.GenParams.clicked.connect(self.gen_params)
+        self.GenParams.clicked.connect(self.prepare_gen_params)
         self.ShowPrivateKey.clicked.connect(self.show_pr_key)
-        self.UseGenParams.stateChanged.connect(self.fill_gen_sign_fields)
         self.FileGenSign.clicked.connect(self.open_file_dialog)
         self.FileVerifySign.clicked.connect(self.open_file_dialog)
         self.Sign.clicked.connect(self.create_sign)
         self.Verify.clicked.connect(self.verify_sign)
+        self.progressBar.hide()
+        self.statusLabel.hide()
+
+    def prepare_gen_params(self):
+        self.progressBar.setMaximum(0)
+        self.progressBar.show()
+        self.statusLabel.show()
+        QtCore.QTimer.singleShot(10, self.gen_params)
 
     def gen_params(self):
         params = GenCurveConfig().generate_params()
@@ -31,6 +37,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.UseGenParams.isChecked():
             data = {"params": params, "G": G, "keys": keys}
             self.fill_gen_sign_fields(data)
+        self.progressBar.hide()
+        self.statusLabel.hide()
 
     def fill_gen_params_fields(self, params, G, keys):
         self.Parameters.setText(f"a = {str(params['a'])}\nb = {str(params['b'])}\n"
