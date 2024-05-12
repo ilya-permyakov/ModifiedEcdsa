@@ -15,7 +15,74 @@ def plot_elliptic_curve(a, b, p):
                 x_vals.append(x)
                 y_vals.append(y)
 
-    plt.scatter(x_vals, y_vals)
+    plt.scatter(x_vals, y_vals, label=f"$y^2 = (x^3  {a}x + {b})$ mod {p}", s=100)
+    # plt.title("Elliptic Curve")
+    plt.legend(fontsize='x-large', loc='upper right')
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.show()
+
+
+def plot_elliptic_curve_normal():
+    # Диапазон значений x
+    x = np.linspace(-3, 3, 3000)
+
+    # Рассчитываем значения под корнем
+    y_squared = x ** 3 - 3 * x + 3
+
+    # Инициализируем y как массив комплексных чисел
+    y = np.sqrt(y_squared + 0j)
+
+    # Реальная и мнимая части
+    y_real = y.real
+    y_imag = y.imag
+
+    # Только реальные значения y (где мнимая часть равна 0)
+    real_mask = (y_imag == 0)
+
+    x_real = x[real_mask]
+    y_real = y_real[real_mask]
+
+    # Построение графика
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.plot(x_real, y_real, 'black', label=f"$y^2 = x^3 - 3x + 3$")
+    ax.plot(x_real, -y_real, 'black')
+
+    for spine in ['top', 'right', 'left', 'bottom']:
+        ax.spines[spine].set_visible(False)
+
+        # Установка осей через (0, 0)
+    ax.spines['bottom'].set_position('zero')
+    ax.spines['bottom'].set_visible(True)
+    ax.spines['left'].set_position('zero')
+    ax.spines['left'].set_visible(True)
+
+    # Убираем верхние и правые тики
+    ax.xaxis.set_ticks_position('bottom')
+    ax.yaxis.set_ticks_position('left')
+
+    # Добавляем стрелки на оси
+    ax.plot((1), (0), ls="", marker=">", ms=10, color="black", transform=ax.get_yaxis_transform(), clip_on=False)
+    ax.plot((0), (1), ls="", marker="^", ms=10, color="black", transform=ax.get_xaxis_transform(), clip_on=False)
+
+    # Убираем деления на осях
+    ax.xaxis.set_ticks([])
+    ax.yaxis.set_ticks([])
+
+    # Добавляем ноль в начале координат
+    ax.text(-0.03, -0.1, '0', verticalalignment='top', horizontalalignment='right', fontsize=15)
+
+    # Настройка меток на осях
+    ax.set_xlabel('x', loc='right')  # Устанавливаем метку x у края оси
+    ax.set_ylabel('y', loc='top', rotation=0)  # Устанавливаем метку y вертикально у верха оси
+    # plt.title('Graph of $y^2 = x^3 - 3x + 3$')
+    # plt.xlabel('x')
+    # plt.ylabel('y')
+
+    # plt.axhline(0, color='black', linewidth=1)
+    # plt.axvline(0, color='black', linewidth=1)
+    # plt.grid(True)
+    plt.legend(fontsize='large', loc='upper right')
     plt.show()
 
 
@@ -68,8 +135,10 @@ def plot_elliptic_curve_on_torus(a, b, p, R=1, r=0.2):
     plt.show()
 
 
-plot_elliptic_curve_on_torus(-3, 3, 13)
+# plot_elliptic_curve_on_torus(-3, 3, 13)
 
 # plot_torus()
 
 # plot_elliptic_curve(-3, 3, 13)
+
+plot_elliptic_curve_normal()

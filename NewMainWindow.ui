@@ -497,7 +497,7 @@ p, li { white-space: pre-wrap; }
        <enum>QFrame::NoFrame</enum>
       </property>
       <property name="text">
-       <string>Подписывание сообщения</string>
+       <string>Генерация подписи</string>
       </property>
       <property name="textFormat">
        <enum>Qt::AutoText</enum>
