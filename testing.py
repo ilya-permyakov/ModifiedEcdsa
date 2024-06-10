@@ -102,8 +102,7 @@ def test_my_ecdsa(curve, base_point, iterations):
 
 
 iter = 50
-# params = GenCurveConfig().generate_params()
-# G = BasePoint(params).find_base_point()
+
 '''
 params = {'a': 94, 'b': 134, 'p': 44216873401415158701553181970864582114607005578873503324380671624288035740323}
 G = {'base_point': Point(12317735490499994716251161198116947244326069763492380038307986727286914863496,
@@ -141,31 +140,3 @@ print(f"Улучшение времени проверки подписи: {impr
 Улучшение времени генерации подписи: 13.649%
 Улучшение времени проверки подписи: 11.426%
 '''
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''while improvement_sign <= 9:
-    original_ecdsa_sign_avg, original_ecdsa_verify_avg = test_original_ecdsa(params, G, iter)
-    my_ecdsa_sign_avg, my_ecdsa_verify_avg = test_my_ecdsa(params, G, iter)
-    improvement_sign = ((original_ecdsa_sign_avg - my_ecdsa_sign_avg) / original_ecdsa_sign_avg) * 100
-    improvement_verify = ((original_ecdsa_verify_avg - my_ecdsa_verify_avg) / original_ecdsa_verify_avg) * 100'''
